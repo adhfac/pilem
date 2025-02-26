@@ -59,8 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Image.network('https://image.tmdb.org/t/p/w500${movie.posterPath}', height: 150, width: 150, fit: BoxFit.cover,),
                         const SizedBox(height: 5,),
-                        Text(movie.title.length > 14 ? '${movie.title.substring(0, 10)}...' : movie.title),
-                        
+                        Text(movie.title.length > 14 ? '${movie.title.substring(0, 10)}...' : movie.title, style: const TextStyle(fontWeight: FontWeight.bold),),
                       ],
                     ),
                   );
