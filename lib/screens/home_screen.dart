@@ -80,8 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
               painter: GridPainter(),
             ),
           ),
-          
-          // Main content
           _allMovies.isEmpty
               ? const Center(
                   child: CircularProgressIndicator(
