@@ -7,7 +7,8 @@ class ApiServices {
   static const String baseURL = 'https://api.themoviedb.org/3';
 
   Future<List<Movie>> getAllMovies() async {
-    final res = await http.get(Uri.parse("$baseURL/movie/now_playing?api_key=$apikey"));
+    final res =
+        await http.get(Uri.parse("$baseURL/movie/now_playing?api_key=$apikey"));
     if (res.statusCode == 200) {
       final data = json.decode(res.body);
       return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
@@ -17,7 +18,8 @@ class ApiServices {
   }
 
   Future<List<Movie>> getTrendingMovies() async {
-    final res = await http.get(Uri.parse("$baseURL/trending/movie/week?api_key=$apikey"));
+    final res = await http
+        .get(Uri.parse("$baseURL/trending/movie/week?api_key=$apikey"));
     if (res.statusCode == 200) {
       final data = json.decode(res.body);
       return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
@@ -27,12 +29,24 @@ class ApiServices {
   }
 
   Future<List<Movie>> getPopularMovies() async {
-    final res = await http.get(Uri.parse("$baseURL/movie/popular?api_key=$apikey"));
+    final res =
+        await http.get(Uri.parse("$baseURL/movie/popular?api_key=$apikey"));
     if (res.statusCode == 200) {
       final data = json.decode(res.body);
       return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
     } else {
       throw Exception("Failed to load popular movies");
+    }
+  }
+
+  Future<List<Movie>> searchMovies() async {
+    final res = await http
+        .get(Uri.parse("$baseURL/search/movie?query&api_key=$apikey"));
+    if (res.statusCode == 200) {
+      final data = json.decode(res.body);
+      return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
+    } else {
+      throw Exception("Failed to load movies");
     }
   }
 }
