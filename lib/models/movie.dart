@@ -49,6 +49,7 @@ class Movie {
       voteCount: json['vote_count'] ?? 0,
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'adult': adult,
@@ -67,7 +68,4 @@ class Movie {
       'vote_count': voteCount,
     };
   }
-
-  @override
-  String toString() => 'Movie(title: $title, releaseDate: $releaseDate)';
 }

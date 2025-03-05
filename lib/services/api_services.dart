@@ -39,9 +39,9 @@ class ApiServices {
     }
   }
 
-  Future<List<Movie>> searchMovies() async {
+  Future<List<Movie>> searchMovies(String query) async {
     final res = await http
-        .get(Uri.parse("$baseURL/search/movie?query&api_key=$apikey"));
+        .get(Uri.parse("$baseURL/search/movie?query=$query&api_key=$apikey"));
     if (res.statusCode == 200) {
       final data = json.decode(res.body);
       return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();

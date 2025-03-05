@@ -48,16 +48,19 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        backgroundColor: const Color.fromARGB(255, 27, 24, 36),
+        backgroundColor: const Color.fromARGB(255, 22, 22, 22),
         selectedItemColor: Colors.white,
-        selectedLabelStyle: const TextStyle(fontFamily: 'iceberg', color: Colors.white),
+        selectedLabelStyle:
+            const TextStyle(fontFamily: 'iceberg', color: Colors.white),
         unselectedItemColor: const Color.fromARGB(255, 143, 143, 143),
-        unselectedLabelStyle: const TextStyle(fontFamily: 'iceberg', color: Color.fromARGB(255, 143, 143, 143)),
+        unselectedLabelStyle: const TextStyle(
+            fontFamily: 'iceberg', color: Color.fromARGB(255, 143, 143, 143)),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_outline_sharp), label: 'Favorites'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_outline_sharp), label: 'Favorites'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          
         ],
       ),
     );

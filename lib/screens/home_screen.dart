@@ -43,13 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text('Top Mov',
-            style: TextStyle(fontFamily: 'iceberg', color: Colors.white)),
+            style: TextStyle(fontFamily: 'iceberg', color: Color.fromARGB(255, 255, 45, 45))),
         backgroundColor: Colors.black,
         elevation: 4,
+        centerTitle: true,
       ),
       body: _allMovies.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
