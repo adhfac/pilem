@@ -1,10 +1,56 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class MovieDetailScreen extends StatelessWidget {
+class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
 
   const MovieDetailScreen({super.key, required this.movie});
+
+  @override
+  State<MovieDetailScreen> createState() => _MovieDetailScreenState();
+}
+
+class _MovieDetailScreenState extends State<MovieDetailScreen> {
+  bool _isFavorite = false;
+
+  Future<void> _checkIsFavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isFavorite = prefs.containsKey('movie_${widget.movie.id}');
+    });
+  }
+
+  Future<void> _toggleFav() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    if (_isFavorite) {
+      final String movieJson = jsonEncode(widget.movie.toJson());
+      prefs.setString('movie_${widget.movie.id}', movieJson);
+
+      List<String> favoriteMovieIds =
+          prefs.getStringList('favoriteMovies') ?? [];
+      favoriteMovieIds.add(widget.movie.id.toString());
+      prefs.setStringList('favoriteMovies', favoriteMovieIds);
+    } else {
+      prefs.remove('movie_${widget.movie.id}');
+      List<String> favoriteMovieIds =
+          prefs.getStringList('favoriteMovies') ?? [];
+      favoriteMovieIds.remove(widget.movie.id.toString());
+      prefs.setStringList('favoriteMovies', favoriteMovieIds);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _checkIsFavorite();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +67,29 @@ class MovieDetailScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
         ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10, top: 10),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+                icon: Icon(
+                    _isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border_outlined,
+                    color: Colors.white),
+                onPressed: _toggleFav),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -37,7 +100,7 @@ class MovieDetailScreen extends StatelessWidget {
               children: [
                 // Backdrop image
                 Image.network(
-                  'https://image.tmdb.org/t/p/w500${movie.backdropPath}',
+                  'https://image.tmdb.org/t/p/w500${widget.movie.backdropPath}',
                   height: 300,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -82,7 +145,7 @@ class MovieDetailScreen extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.network(
-                              'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                              'https://image.tmdb.org/t/p/w500${widget.movie.posterPath}',
                               height: 150,
                               width: 100,
                               fit: BoxFit.cover,
@@ -96,7 +159,7 @@ class MovieDetailScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                movie.title,
+                                widget.movie.title,
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -108,10 +171,10 @@ class MovieDetailScreen extends StatelessWidget {
                               // Rating with stars
                               Row(
                                 children: [
-                                  _buildRatingStars(movie.voteAverage),
+                                  _buildRatingStars(widget.movie.voteAverage),
                                   const SizedBox(width: 8),
                                   Text(
-                                    '${movie.voteAverage}/10',
+                                    '${widget.movie.voteAverage}/10',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'iceberg',
@@ -129,7 +192,7 @@ class MovieDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             // Movie stats in a card
             Container(
               margin: const EdgeInsets.all(16),
@@ -141,13 +204,16 @@ class MovieDetailScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildStatItem(Icons.calendar_today, 'Released', _formatDate(movie.releaseDate)),
-                  _buildStatItem(Icons.thumb_up, 'Votes', movie.voteCount.toString()),
-                  _buildStatItem(Icons.star, 'Rating', movie.voteAverage.toString()),
+                  _buildStatItem(Icons.calendar_today, 'Released',
+                      _formatDate(widget.movie.releaseDate)),
+                  _buildStatItem(Icons.thumb_up, 'Votes',
+                      widget.movie.voteCount.toString()),
+                  _buildStatItem(Icons.star, 'Rating',
+                      widget.movie.voteAverage.toString()),
                 ],
               ),
             ),
-            
+
             // Overview section
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -165,7 +231,7 @@ class MovieDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    movie.overview,
+                    widget.movie.overview,
                     style: const TextStyle(
                       fontSize: 16,
                       height: 1.5,
@@ -176,29 +242,34 @@ class MovieDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
-  
+
   // Helper method to build star rating
   Widget _buildRatingStars(double rating) {
     int fullStars = rating ~/ 2;
     bool hasHalfStar = (rating - fullStars * 2) >= 1;
     int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
+
     return Row(
       children: [
-        ...List.generate(fullStars, (_) => const Icon(Icons.star, color: Colors.amber, size: 18)),
-        if (hasHalfStar) const Icon(Icons.star_half, color: Colors.amber, size: 18),
-        ...List.generate(emptyStars, (_) => const Icon(Icons.star_border, color: Colors.amber, size: 18)),
+        ...List.generate(fullStars,
+            (_) => const Icon(Icons.star, color: Colors.amber, size: 18)),
+        if (hasHalfStar)
+          const Icon(Icons.star_half, color: Colors.amber, size: 18),
+        ...List.generate(
+            emptyStars,
+            (_) =>
+                const Icon(Icons.star_border, color: Colors.amber, size: 18)),
       ],
     );
   }
-  
+
   // Helper method to build stat item
   Widget _buildStatItem(IconData icon, String label, String value) {
     return Column(
@@ -226,7 +297,7 @@ class MovieDetailScreen extends StatelessWidget {
       ],
     );
   }
-  
+
   // Helper method to format date
   String _formatDate(String date) {
     try {

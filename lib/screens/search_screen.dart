@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
+import 'package:pilem/screens/detail_screen.dart';
 import 'package:pilem/services/api_services.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -97,18 +98,98 @@ class _SearchScreenState extends State<SearchScreen> {
                 ],
               ),
             ),
+            const SizedBox(
+              height: 16,
+            ),
             Expanded(
               child: Visibility(
-                visible: _searchController.text.isNotEmpty,
-                child: ListView.builder(
-                  itemCount: _searchResults.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(_searchResults[index].title,
-                          style: const TextStyle(color: Colors.white)),
-                    );
-                  },
-                ),
+                visible: true,
+                child: _searchController.text.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Temukan film favorit anda',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'iceberg',
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : _searchResults.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Hasil pencarian tidak ditemukan.',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'iceberg',
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : GridView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: _searchResults.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 0.55,
+                            ),
+                            itemBuilder: (context, index) {
+                              final movie = _searchResults[index];
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          MovieDetailScreen(movie: movie),
+                                    ),
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(15),
+                                splashColor: Colors.blueAccent.withOpacity(0.5),
+                                highlightColor:
+                                    Colors.greenAccent.withOpacity(0.3),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.5),
+                                          spreadRadius: 3,
+                                          blurRadius: 10,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Image.network(
+                                          'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                                          height: 160,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          movie.title.length > 14
+                                              ? '${movie.title.substring(0, 10)}...'
+                                              : movie.title,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'iceberg',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
               ),
             ),
           ],
