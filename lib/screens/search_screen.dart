@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
 import 'package:pilem/screens/detail_screen.dart';
@@ -166,10 +167,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                     ),
                                     child: Column(
                                       children: [
-                                        Image.network(
-                                          'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                                        CachedNetworkImage(
+                                          imageUrl:
+                                              'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                                           height: 160,
                                           fit: BoxFit.cover,
+                                          placeholder: (context, url) {
+                                            return const Center(
+                                              child: CircularProgressIndicator(
+                                                color: Colors.blue,
+                                              ),
+                                            );
+                                          },
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error_rounded, color: Colors.white,),
                                         ),
                                         const SizedBox(height: 5),
                                         Text(

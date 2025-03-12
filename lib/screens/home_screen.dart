@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
 import 'package:pilem/screens/detail_screen.dart';
@@ -88,13 +89,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Column(
                     children: [
-                      Image.network(
-                        movie.posterPath.isNotEmpty
-                            ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
-                            : 'https://via.placeholder.com/90x160?text=No+Image',
+                      CachedNetworkImage(
+                        imageUrl:
+                            'https://image.tmdb.org/t/p/w500${movie.posterPath}',
                         height: 160,
-                        width: 90,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.blue,
+                            ),
+                          );
+                        },
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.error_rounded,
+                          color: Colors.white,
+                        ),
                       ),
                       const SizedBox(height: 5),
                       Text(

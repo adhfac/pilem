@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,14 +46,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     }
   }
 
-  
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _checkIsFavorite();
-
   }
 
   @override
@@ -98,17 +96,26 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero image with gradient overlay
             Stack(
               children: [
-                // Backdrop image
-                Image.network(
-                  'https://image.tmdb.org/t/p/w500${widget.movie.backdropPath}',
+                CachedNetworkImage(
+                  imageUrl:
+                      'https://image.tmdb.org/t/p/w500${widget.movie.backdropPath}',
                   height: 300,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.blue,
+                      ),
+                    );
+                  },
+                  errorWidget: (context, url, error) => const Icon(
+                    Icons.error_rounded,
+                    color: Colors.white,
+                  ),
                 ),
-                // Gradient overlay
                 Container(
                   height: 300,
                   decoration: BoxDecoration(
@@ -123,7 +130,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     ),
                   ),
                 ),
-                // Poster and info on top of backdrop
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -133,7 +139,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        // Poster with elevation
                         Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
@@ -147,16 +152,27 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              'https://image.tmdb.org/t/p/w500${widget.movie.posterPath}',
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  'https://image.tmdb.org/t/p/w500${widget.movie.posterPath}',
                               height: 150,
                               width: 100,
                               fit: BoxFit.cover,
+                              placeholder: (context, url) {
+                                return const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.blue,
+                                  ),
+                                );
+                              },
+                              errorWidget: (context, url, error) => const Icon(
+                                Icons.error_rounded,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        // Title and rating
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +187,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              // Rating with stars
                               Row(
                                 children: [
                                   _buildRatingStars(widget.movie.voteAverage),
@@ -196,7 +211,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               ],
             ),
 
-            // Movie stats in a card
             Container(
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
