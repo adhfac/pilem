@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTitle(String title, Color color) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      
       child: Text(
         title,
         style: TextStyle(
@@ -90,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: [
                       Image.network(
-                        movie.posterPath != null && movie.posterPath.isNotEmpty
+                        movie.posterPath.isNotEmpty
                             ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
                             : 'https://via.placeholder.com/90x160?text=No+Image',
                         height: 160,
