@@ -45,11 +45,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     }
   }
 
+  
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _checkIsFavorite();
+
   }
 
   @override

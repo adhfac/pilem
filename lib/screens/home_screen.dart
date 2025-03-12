@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTitle(String title, Color color) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
+      
       child: Text(
         title,
         style: TextStyle(

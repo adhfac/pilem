@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
 import 'package:pilem/screens/detail_screen.dart';
+import 'package:pilem/services/api_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -11,6 +15,34 @@ class FavoriteScreen extends StatefulWidget {
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
   List<Movie> _favoriteMovies = [];
+
+  Future<void> _loadFavoriteMovies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String> favoriteMovieIds =
+        prefs.getKeys().where((key) => key.startsWith('movie_')).toList();
+    print('favoriteMovieIds : $favoriteMovieIds');
+
+    setState(() {
+      _favoriteMovies = favoriteMovieIds
+          .map((id) {
+            final String? movieJson = prefs.getString(id);
+            if (movieJson != null && movieJson.isNotEmpty) {
+              final Map<String, dynamic> movieData = jsonDecode(movieJson);
+              return Movie.fromJson(movieData);
+            }
+            return null;
+          })
+          .whereType<Movie>()
+          .toList();
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadFavoriteMovies();
+  }
 
   @override
   Widget build(BuildContext context) {

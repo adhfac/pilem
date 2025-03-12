@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pilem/models/movie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiServices {
   static const String apikey = '6a21aae48563a82f5b7ed29b430e6633';
@@ -49,4 +50,6 @@ class ApiServices {
       throw Exception("Failed to load movies");
     }
   }
+
+
 }
